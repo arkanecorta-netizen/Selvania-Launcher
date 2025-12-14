@@ -12,7 +12,27 @@ class Settings {
     async init(config) {
         this.config = config;
         this.db = new database();
-        this.navBTN()
+
+        // Pestañas horizontales
+        const ajustesTab = document.querySelector('.ajustes-tab');
+        const cuentasTab = document.querySelector('.cuentas-tab');
+        const ajustesContent = document.getElementById('ajustes-tab');
+        const cuentasContent = document.getElementById('cuentas-tab');
+        if (ajustesTab && cuentasTab && ajustesContent && cuentasContent) {
+            ajustesTab.addEventListener('click', () => {
+                ajustesTab.classList.add('active-tab');
+                cuentasTab.classList.remove('active-tab');
+                ajustesContent.style.display = '';
+                cuentasContent.style.display = 'none';
+            });
+            cuentasTab.addEventListener('click', () => {
+                cuentasTab.classList.add('active-tab');
+                ajustesTab.classList.remove('active-tab');
+                cuentasContent.style.display = '';
+                ajustesContent.style.display = 'none';
+            });
+        }
+
         this.accounts()
         this.ram()
         this.javaPath()

@@ -1,6 +1,6 @@
 /**
  * @author Luuxis
- * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
+ * Licencia Luuxis v1.0 (ver archivo LICENSE para los detalles en FR/EN)
  */
 import { config, database, logger, changePanel, appdata, setStatus, pkg, popup } from '../utils.js'
 
@@ -12,93 +12,116 @@ class Home {
     async init(config) {
         this.config = config;
         this.db = new database();
-        this.news()
-        this.socialLick()
-        this.instancesSelect()
-        document.querySelector('.settings-btn').addEventListener('click', e => changePanel('settings'))
+        await this.instancesSelectRedesign();
+        this.setupMenuRedesign();
+        this.setupAddInstanceRedesign();
+        this.setupPlayButtonRedesign();
     }
 
-    async news() {
-        let newsElement = document.querySelector('.news-list');
-        let news = await config.getNews().then(res => res).catch(err => false);
-        if (news) {
-            if (!news.length) {
-                let blockNews = document.createElement('div');
-                blockNews.classList.add('news-block');
-                blockNews.innerHTML = `
-                    <div class="news-header">
-                        <img class="server-status-icon" src="assets/images/icon.png">
-                        <div class="header-text">
-                            <div class="title">Aucun news n'ai actuellement disponible.</div>
-                        </div>
-                        <div class="date">
-                            <div class="day">1</div>
-                            <div class="month">Janvier</div>
-                        </div>
-                    </div>
-                    <div class="news-content">
-                        <div class="bbWrapper">
-                            <p>Vous pourrez suivre ici toutes les news relative au serveur.</p>
-                        </div>
-                    </div>`
-                newsElement.appendChild(blockNews);
-            } else {
-                for (let News of news) {
-                    let date = this.getdate(News.publish_date)
-                    let blockNews = document.createElement('div');
-                    blockNews.classList.add('news-block');
-                    blockNews.innerHTML = `
-                        <div class="news-header">
-                            <img class="server-status-icon" src="assets/images/icon.png">
-                            <div class="header-text">
-                                <div class="title">${News.title}</div>
-                            </div>
-                            <div class="date">
-                                <div class="day">${date.day}</div>
-                                <div class="month">${date.month}</div>
-                            </div>
-                        </div>
-                        <div class="news-content">
-                            <div class="bbWrapper">
-                                <p>${News.content.replace(/\n/g, '</br>')}</p>
-                                <p class="news-author">Auteur - <span>${News.author}</span></p>
-                            </div>
-                        </div>`
-                    newsElement.appendChild(blockNews);
-                }
+    async instancesSelectRedesign() {
+        // Mostrar y actualizar el nombre de la instancia seleccionada
+        const updateInstanceName = async () => {
+            let configClient = await this.db.readData('configClient');
+            let instancesList = await config.getInstanceList();
+            let instanceSelect = configClient?.instance_select;
+            let instance = instancesList.find(i => i.name == instanceSelect);
+            let instanceNameValue = document.getElementById('instance-name-value');
+            if (instance && instanceNameValue) {
+                instanceNameValue.textContent = instance.name;
+            } else if (instanceNameValue) {
+                instanceNameValue.textContent = '-';
             }
-        } else {
-            let blockNews = document.createElement('div');
-            blockNews.classList.add('news-block');
-            blockNews.innerHTML = `
-                <div class="news-header">
-                        <img class="server-status-icon" src="assets/images/icon.png">
-                        <div class="header-text">
-                            <div class="title">Error.</div>
-                        </div>
-                        <div class="date">
-                            <div class="day">1</div>
-                            <div class="month">Janvier</div>
-                        </div>
-                    </div>
-                    <div class="news-content">
-                        <div class="bbWrapper">
-                            <p>Impossible de contacter le serveur des news.</br>Merci de vérifier votre configuration.</p>
-                        </div>
-                    </div>`
-            newsElement.appendChild(blockNews);
+        };
+        await updateInstanceName();
+        // Permitir refresco cuando se cambie la instancia
+        window.updateInstanceName = updateInstanceName;
+    }
+
+    setupMenuRedesign() {
+        // Menú de tres puntos
+        const menuBtn = document.querySelector('.menu-btn');
+        const menuDropdown = document.querySelector('.menu-dropdown');
+        if (menuBtn && menuDropdown) {
+            menuBtn.addEventListener('click', () => {
+                menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+            document.addEventListener('click', (e) => {
+                if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+                    menuDropdown.style.display = 'none';
+                }
+            });
+            // Ajustes
+            menuDropdown.querySelector('.ajustes-item').addEventListener('click', () => {
+                changePanel('settings');
+                menuDropdown.style.display = 'none';
+            });
+            // Cuenta
+            menuDropdown.querySelector('.cuentas-item').addEventListener('click', () => {
+                changePanel('settings');
+                setTimeout(() => {
+                    // Cambiar a la pestaña de cuentas
+                    const cuentasTab = document.querySelector('.cuentas-tab');
+                    if (cuentasTab) cuentasTab.click();
+                }, 100);
+                menuDropdown.style.display = 'none';
+            });
         }
     }
 
-    socialLick() {
-        let socials = document.querySelectorAll('.social-block')
-
-        socials.forEach(social => {
-            social.addEventListener('click', e => {
-                shell.openExternal(e.target.dataset.url)
-            })
-        });
+    setupAddInstanceRedesign() {
+        // Botón + para agregar instancia (abre popup para seleccionar o crear)
+        const addBtn = document.querySelector('.btn-add-instance');
+        if (addBtn) {
+            addBtn.addEventListener('click', async () => {
+                let instancesList = await this.config.getInstanceList();
+                let popupDiv = document.createElement('div');
+                popupDiv.className = 'instance-popup';
+                popupDiv.style.display = 'flex';
+                popupDiv.innerHTML = `
+                    <div class="instances-tab">
+                        <div class="close-popup icon-close"></div>
+                        <p>Selecciona una instancia:</p>
+                        <div class="instances-List"></div>
+                        <button class="add-new-instance-btn">Crear nueva instancia</button>
+                    </div>
+                `;
+                document.body.appendChild(popupDiv);
+                // Cerrar popup
+                popupDiv.querySelector('.close-popup').onclick = () => popupDiv.remove();
+                // Listar instancias
+                let listDiv = popupDiv.querySelector('.instances-List');
+                instancesList.forEach(inst => {
+                    let el = document.createElement('div');
+                    el.className = 'instance-elements';
+                    el.textContent = inst.name;
+                    el.onclick = async () => {
+                        let configClient = await this.db.readData('configClient');
+                        configClient.instance_select = inst.name;
+                        await this.db.updateData('configClient', configClient);
+                        if (window.updateInstanceName) window.updateInstanceName();
+                        popupDiv.remove();
+                    };
+                    listDiv.appendChild(el);
+                });
+                // Crear nueva instancia (solo ejemplo, puedes personalizar)
+                popupDiv.querySelector('.add-new-instance-btn').onclick = () => {
+                    alert('Funcionalidad para crear nueva instancia próximamente.');
+                };
+            });
+        }
     }
+
+    setupPlayButtonRedesign() {
+        // Botón principal de jugar
+        const playBtn = document.querySelector('.main-play-btn');
+        if (playBtn) {
+            playBtn.addEventListener('click', () => {
+                this.startGame();
+            });
+        }
+    }
+
+    // Funciones de noticias y redes sociales eliminadas
 
     async instancesSelect() {
         let configClient = await this.db.readData('configClient')
@@ -125,19 +148,8 @@ class Home {
         }
 
         for (let instance of instancesList) {
-            if (instance.whitelistActive) {
-                let whitelist = instance.whitelist.find(whitelist => whitelist == auth?.name)
-                if (whitelist !== auth?.name) {
-                    if (instance.name == instanceSelect) {
-                        let newInstanceSelect = instancesList.find(i => i.whitelistActive == false)
-                        let configClient = await this.db.readData('configClient')
-                        configClient.instance_select = newInstanceSelect.name
-                        instanceSelect = newInstanceSelect.name
-                        setStatus(newInstanceSelect.status)
-                        await this.db.updateData('configClient', configClient)
-                    }
-                }
-            } else console.log(`Initializing instance ${instance.name}...`)
+            // Permitir acceso a todos los usuarios, ignorando la whitelist
+            console.log(`Inicializando instancia ${instance.name}...`)
             if (instance.name == instanceSelect) setStatus(instance.status)
         }
 
@@ -169,25 +181,13 @@ class Home {
             if (e.target.classList.contains('instance-select')) {
                 instancesListPopup.innerHTML = ''
                 for (let instance of instancesList) {
-                    if (instance.whitelistActive) {
-                        instance.whitelist.map(whitelist => {
-                            if (whitelist == auth?.name) {
-                                if (instance.name == instanceSelect) {
-                                    instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements active-instance">${instance.name}</div>`
-                                } else {
-                                    instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements">${instance.name}</div>`
-                                }
-                            }
-                        })
+                    // Mostrar todas las instancias, sin importar whitelist
+                    if (instance.name == instanceSelect) {
+                        instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements active-instance">${instance.name}</div>`
                     } else {
-                        if (instance.name == instanceSelect) {
-                            instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements active-instance">${instance.name}</div>`
-                        } else {
-                            instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements">${instance.name}</div>`
-                        }
+                        instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements">${instance.name}</div>`
                     }
                 }
-
                 instancePopup.style.display = 'flex'
             }
 
@@ -227,14 +227,13 @@ class Home {
             },
 
             verify: options.verify,
-
             ignored: [...options.ignored],
 
             java: {
                 path: configClient.java_config.java_path,
             },
 
-            JVM_ARGS:  options.jvm_args ? options.jvm_args : [],
+            JVM_ARGS: options.jvm_args ? options.jvm_args : [],
             GAME_ARGS: options.game_args ? options.game_args : [],
 
             screen: {
@@ -261,14 +260,14 @@ class Home {
         });
 
         launch.on('progress', (progress, size) => {
-            infoStarting.innerHTML = `Téléchargement ${((progress / size) * 100).toFixed(0)}%`
+            infoStarting.innerHTML = `Descargando ${((progress / size) * 100).toFixed(0)}%`
             ipcRenderer.send('main-window-progress', { progress, size })
             progressBar.value = progress;
             progressBar.max = size;
         });
 
         launch.on('check', (progress, size) => {
-            infoStarting.innerHTML = `Vérification ${((progress / size) * 100).toFixed(0)}%`
+            infoStarting.innerHTML = `Verificando ${((progress / size) * 100).toFixed(0)}%`
             ipcRenderer.send('main-window-progress', { progress, size })
             progressBar.value = progress;
             progressBar.max = size;
@@ -288,7 +287,7 @@ class Home {
         launch.on('patch', patch => {
             console.log(patch);
             ipcRenderer.send('main-window-progress-load')
-            infoStarting.innerHTML = `Patch en cours...`
+            infoStarting.innerHTML = `Aplicando parche...`
         });
 
         launch.on('data', (e) => {
@@ -298,7 +297,7 @@ class Home {
             };
             new logger('Minecraft', '#36b030');
             ipcRenderer.send('main-window-progress-load')
-            infoStarting.innerHTML = `Demarrage en cours...`
+            infoStarting.innerHTML = `Iniciando...`
             console.log(e);
         })
 
@@ -309,7 +308,7 @@ class Home {
             ipcRenderer.send('main-window-progress-reset')
             infoStartingBOX.style.display = "none"
             playInstanceBTN.style.display = "flex"
-            infoStarting.innerHTML = `Vérification`
+            infoStarting.innerHTML = `Verificación`
             new logger(pkg.name, '#7289da');
             console.log('Close');
         });
@@ -318,7 +317,7 @@ class Home {
             let popupError = new popup()
 
             popupError.openPopup({
-                title: 'Erreur',
+                title: 'Error',
                 content: err.error,
                 color: 'red',
                 options: true
@@ -330,7 +329,7 @@ class Home {
             ipcRenderer.send('main-window-progress-reset')
             infoStartingBOX.style.display = "none"
             playInstanceBTN.style.display = "flex"
-            infoStarting.innerHTML = `Vérification`
+            infoStarting.innerHTML = `Verificación`
             new logger(pkg.name, '#7289da');
             console.log(err);
         });
@@ -341,7 +340,7 @@ class Home {
         let year = date.getFullYear()
         let month = date.getMonth() + 1
         let day = date.getDate()
-        let allMonth = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+        let allMonth = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
         return { year: year, month: allMonth[month - 1], day: day }
     }
 }

@@ -1,8 +1,146 @@
-.home .container {
+.container-home-redesign {
     display: flex;
-    height: 100%;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    width: 100vw;
+    background: var(--background);
+}
+
+.instance-logo {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.logo-instancia {
+    width: 96px;
+    height: 96px;
+    border-radius: 24px;
+    box-shadow: 0 2px 12px #0003;
+}
+.instance-plus-btn {
+    margin: 1rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+.btn-add-instance {
+    background: var(--element-color);
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0002;
+    transition: background 0.2s;
+}
+.btn-add-instance:hover {
+    background: var(--color);
+}
+.main-play-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0 3rem 0;
+}
+.instance-name-label {
+    font-size: 1.2rem;
+    color: var(--color);
+    margin-bottom: 0.5rem;
+}
+.instance-name-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--element-color);
+    margin-bottom: 2rem;
+}
+.main-play-btn {
+    font-size: 1.5rem;
+    background: var(--element-color);
+    color: var(--background);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 3rem;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 8px #0002;
+    transition: background 0.2s;
+}
+.main-play-btn:hover {
+    background: var(--color);
+    color: var(--element-color);
+}
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--background-transparent);
+    padding: 0.5rem 2rem;
+    box-shadow: 0 -2px 12px #0002;
+    z-index: 10;
+}
+.player-head {
+    background: url('../../images/default/setve.png'), no-repeat;
+    background-size: cover;
+    image-rendering: pixelated;
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px #0002;
+}
+.menu-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.menu-btn:hover {
+    background: var(--element-color);
+}
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    background: var(--background);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px #0003;
+    min-width: 140px;
+    z-index: 100;
+}
+.menu-item {
+    padding: 1rem 2rem;
+    color: var(--color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--background-transparent);
+    transition: background 0.2s;
+}
+.menu-item:last-child {
+    border-bottom: none;
+}
+.menu-item:hover {
+    background: var(--element-color);
+    color: var(--background);
 }
 
 /*******************************************************************************

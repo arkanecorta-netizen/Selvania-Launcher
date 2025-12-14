@@ -1,61 +1,24 @@
-<div class="container">
-    <div class="status-server">
-        <img class="server-status-icon" src="assets/images/icon.png">
-        <div class="server-status-infos">
-            <div class="server-status-name">Minecraft</div>
-            <div class="server-status-text">operationeel - 0 ms</div>
-        </div>
-        <div class="status-player-count">
-            <div class="player-count">0</div>
-        </div>
+<div class="container-home-redesign">
+    <div class="instance-logo">
+        <!-- Aquí va el logo de la instancia -->
+        <img src="assets/images/icon.png" alt="Logo Instancia" class="logo-instancia" />
     </div>
-
-    <div class="home-bottom">
-        <div class="new-tab">
-            <div class="titre-tab-new">Actualités</div>
-            <div class="news-list content-scroll"></div>
-        </div>
-        <div class="social-tab">
-            <div class="social-list content-scroll">
-                <div data-url="https://discord.gg/e9q7Yr2cuQ" class="social-block">
-                    <div class="icon-discord icon-social"></div>
-                </div>
-
-                <div data-url="https://github.com/luuxis" class="social-block">
-                    <div class="icon-github icon-social"></div>
-                </div>
-
-                <div data-url="https://www.youtube.com/LuuxisHD" class="social-block">
-                    <div class="icon-youtube icon-social"></div>
-                </div>
-            </div>
-        </div>
+    <div class="instance-plus-btn">
+        <button class="btn-add-instance"><img src="assets/images/icon-plus.svg" alt="Agregar instancia" /></button>
     </div>
-
-    <div class="sidebar">
-        <div class="player-options">
-            <div class="player-head"></div>
-        </div>
-
-        <div class="play-elements">
-            <div class="play-instance">
-                <button class="play-btn">Jouer</button>
-                <div class="instance-select icon-arrow"></div>
-            </div>
-            <div class="info-starting-game">
-                <div class="info-starting-game-text">Connexion...</div>
-                <progress value="0" max="0" class="progress-bar"></progress>
-            </div>
-        </div>
-
-        <div class="settings-btn icon-settings"></div>
+    <div class="main-play-area">
+        <div class="instance-name-label">Nombre de la instancia:</div>
+        <div class="instance-name-value" id="instance-name-value">-</div>
+        <button class="main-play-btn">Haz click para jugar</button>
     </div>
-
-    <div class="instance-popup">
-        <div class="instances-tab">
-            <div class="close-popup icon-close"></div>
-            <p>Choisissez votre instance...</p>
-            <div class="instances-List"></div>
+    <div class="bottom-bar">
+        <div class="player-head"></div>
+        <div class="menu-bar">
+            <button class="menu-btn"><img src="assets/images/icon-more.svg" alt="Menú" /></button>
+            <div class="menu-dropdown">
+                <div class="menu-item ajustes-item">Ajustes</div>
+                <div class="menu-item cuentas-item">Cuenta</div>
+            </div>
         </div>
     </div>
 </div>

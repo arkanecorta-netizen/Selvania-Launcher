@@ -19,31 +19,55 @@
     margin-top: 80px;
 }
 
-.nav-box {
-    width: 100%;
+.nav-tabs-horizontal {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--background-transparent);
 }
-
-.nav-box #save {
-    border: solid 4px var(--background-element);
-    margin: 3rem;
-}
-
-.nav-settings-btn {
-    font-size: 50%;
-    border: solid 4px var(--element-color);
-    padding: 5px 10px;
-    border-radius: 10px;
-    width: 70%;
-    text-align: center;
-    margin: 0.5rem 0;
+.tab-btn {
+    padding: 1rem 2.5rem;
+    border-radius: 10px 10px 0 0;
+    background: var(--background-transparent);
+    color: var(--color);
+    font-size: 1.2rem;
     cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+    margin-bottom: -2px;
 }
-
-.active-settings-BTN {
+.active-tab {
     background: var(--element-color);
+    color: var(--background);
+    border-bottom: 2px solid var(--element-color);
+}
+.cuentas-tab-content {
+    margin-top: 2rem;
+}
+.chrome-tabs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.chrome-tab {
+    background: var(--background-transparent);
+    color: var(--color);
+    border-radius: 8px 8px 0 0;
+    padding: 0.7rem 2rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border: none;
+    margin-right: 0.5rem;
+    transition: background 0.2s;
+}
+.active-chrome-tab {
+    background: var(--element-color);
+    color: var(--background);
 }
 
 .container-settings {

@@ -13,18 +13,82 @@ class Login {
         this.config = config;
         this.db = new database();
 
-        if (typeof this.config.online == 'boolean') {
-            this.config.online ? this.getMicrosoft() : this.getCrack()
-        } else if (typeof this.config.online == 'string') {
-            if (this.config.online.match(/^(http|https):\/\/[^ "]+$/)) {
-                this.getAZauth();
+        // Ocultar todos los formularios al inicio
+        document.querySelector('.login-home').style.display = 'block';
+        document.querySelector('.login-offline').style.display = 'none';
+        document.querySelector('.login-AZauth').style.display = 'none';
+        document.querySelector('.login-AZauth-A2F').style.display = 'none';
+
+        // Botón NoPremium
+        document.querySelector('.btn-nopremium').addEventListener('click', () => {
+            document.querySelector('.login-home').style.display = 'none';
+            document.querySelector('.login-offline').style.display = 'block';
+            // Limpiar campo pseudo
+            document.querySelector('.email-offline').value = '';
+            // Eliminar listeners previos para evitar duplicados
+            const connectOffline = document.querySelector('.connect-offline');
+            const newConnectOffline = connectOffline.cloneNode(true);
+            connectOffline.parentNode.replaceChild(newConnectOffline, connectOffline);
+            newConnectOffline.addEventListener('click', async () => {
+                let emailOffline = document.querySelector('.email-offline');
+                let popupLogin = new popup();
+                if (emailOffline.value.length < 3) {
+                    popupLogin.openPopup({
+                        title: 'Erreur',
+                        content: 'Votre pseudo doit faire au moins 3 caractères.',
+                        options: true
+                    });
+                    return;
+                }
+                if (emailOffline.value.match(/ /g)) {
+                    popupLogin.openPopup({
+                        title: 'Erreur',
+                        content: 'Votre pseudo ne doit pas contenir d\'espaces.',
+                        options: true
+                    });
+                    return;
+                }
+                let MojangConnect = await Mojang.login(emailOffline.value);
+                if (MojangConnect.error) {
+                    popupLogin.openPopup({
+                        title: 'Erreur',
+                        content: MojangConnect.message,
+                        options: true
+                    });
+                    return;
+                }
+                await this.saveData(MojangConnect)
+                popupLogin.closePopup();
+            });
+        });
+
+        // Botón Premium
+        document.querySelector('.btn-premium').addEventListener('click', () => {
+            document.querySelector('.login-home').style.display = 'none';
+            document.querySelector('.login-offline').style.display = 'none';
+            document.querySelector('.login-AZauth').style.display = 'none';
+            document.querySelector('.login-AZauth-A2F').style.display = 'none';
+            // Eliminar listeners previos de Microsoft y AZauth
+            const connectHome = document.querySelector('.connect-home');
+            const newConnectHome = connectHome.cloneNode(true);
+            connectHome.parentNode.replaceChild(newConnectHome, connectHome);
+            const connectAZauth = document.querySelector('.connect-AZauth');
+            const newConnectAZauth = connectAZauth.cloneNode(true);
+            connectAZauth.parentNode.replaceChild(newConnectAZauth, connectAZauth);
+            // Mostrar el formulario correcto según el tipo de login premium
+            if (typeof this.config.online == 'boolean') {
+                this.config.online ? this.getMicrosoft() : this.getCrack();
+            } else if (typeof this.config.online == 'string') {
+                if (this.config.online.match(/^(http|https):\/\/[^ "]+$/)) {
+                    this.getAZauth();
+                }
             }
-        }
-        
+        });
+
         document.querySelector('.cancel-home').addEventListener('click', () => {
-            document.querySelector('.cancel-home').style.display = 'none'
-            changePanel('settings')
-        })
+            document.querySelector('.cancel-home').style.display = 'none';
+            changePanel('settings');
+        });
     }
 
     async getMicrosoft() {
